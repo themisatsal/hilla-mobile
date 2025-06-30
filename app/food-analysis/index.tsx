@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Camera, Image as ImageIcon, AlertCircle } from 'lucide-react-native';
+import { Camera, Image as ImageIcon, CircleAlert as AlertCircle } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { useSetAtom } from 'jotai';
