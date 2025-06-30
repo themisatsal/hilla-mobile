@@ -1,0 +1,123 @@
+### 0. PURPOSE
+You are BOLT. Use this file as the **system-level configuration** whenever you
+generate **Hilla’s consumer mobile experience** (React-Native or design docs).
+Treat every rule below as default. Down-stream screen prompts inherit them
+unless an instruction explicitly overrides.
+
+---
+
+## 1. BRAND ESSENCE
+| Field         | Instruction                                                                                           |
+| ------------- | ------------------------------------------------------------------------------------------------------ |
+| Name          | **Hilla** — always lowercase in logotype; Finnish *cloudberry*.                                        |
+| Mission       | Turn evidence-based nutrition into calm, personal guidance through conception, pregnancy, postpartum.  |
+| Personality   | Bold truths · Nordic calm · Warm empathy.                                                              |
+| Voice Default | **Warm** — supportive big sister + modern midwife.                                                    |
+| Style Toggle  | Support: `super-bold`, `gen-z`, `normal`, `geeky`, `warm`. Switch copy vocabulary/emoji accordingly.   |
+| Tone Rule     | 1) Lead with a fact → 2) Gentle verb/action → 3) ≤ 120 chars.                                          |
+
+---
+
+## 2. VISUAL TOKENS
+### 2.1 Palette — “Northern Berry”
+| Role               | Hex        |
+| ------------------ | ---------- |
+| Lavender (primary) | #8A6DFF    |
+| Cloudberry Orange  | #FF9B4A    |
+| Success Mint       | #28C391    |
+| Pale Rose Blush    | #FADDEA    |
+| Ivory Surface      | #FAF9F7    |
+| Ink Slate Text     | #1E1E28    |
+
+### 2.2 Typography
+- **Clash Display** → H1-H3  
+- **General Sans** → body/UI  
+- **Satoshi Mono** → numbers & rings
+
+### 2.3 Key Asset
+**Cloudberry Bloom Score Orb** (Lottie≤250 kB)  
+- 0–30 % = bud · 31–60 % = half · 61–80 % = bloom · 81–100 % = full glow + confetti.
+
+---
+
+## 3. IA & SCREEN IDS (MVP)
+| Screen_ID         | Purpose / Key Blocks                                                                |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| `onboarding_00`   | Welcome & Promise                                                                   |
+| `onboarding_01`   | Name & Pronouns                                                                     |
+| `onboarding_02`   | Choose Life Stage (TTC, T1-T3, PP)                                                  |
+| `onboarding_03`   | Choose Main Goal (chips adapt to stage)                                             |
+| `onboarding_04`   | Dietary Snapshot                                                                   |
+| `onboarding_05`   | Energy Boosters (10 chips + add custom)                                             |
+| `onboarding_06`   | Energy Drainers (10 chips + add custom)                                             |
+| `onboarding_07`   | Adaptive Baseline Quiz (3-5 Q) ← auto-branch                                        |
+| `onboarding_08`   | Permissions & Data Safety                                                           |
+| `onboarding_09`   | Connect Wearables (optional)                                                        |
+| `onboarding_10`   | Paywall & Plan Choice (+ free-trial secondary link)                                 |
+| `onboarding_11`   | Privacy & Disclaimer                                                                |
+| `onboarding_12`   | **All Set!** dynamic headline + Bloom Orb confetti                                  |
+| `onboarding_13`   | App Feedback Request (5-star)                                                       |
+| `home`            | Header • Bloom Orb • Nutrient Ring • Tip Card • Quick Add • Carousel                |
+| `meal_log_flow`   | Command Palette • Photo Flow • Voice Flow                                           |
+| `profile`         | Stage & Goal Card • Timeline • Sharing • Settings list                              |
+| `trends`          | Header (AI toggle) • Streak bar • Charts • AI Panel • Correlations                  |
+| `ask_hilla`       | NLQ overlay (global)                                                                |
+| `offline_banner`  | Red bar (global)                                                                    |
+| `error_toast`     | Danger Rose toast (global)                                                          |
+
+---
+
+## 4. COMPONENT LIBRARY
+| Component            | Notes                                                        |
+| -------------------- | ------------------------------------------------------------ |
+| `SnapshotRing`       | 120 px ⌀, Lavender track, Mint tick @100 %.                 |
+| `TipCard`            | 320×120 », Ivory bg, Cloudberry left stripe.                |
+| `CommandPalette`     | 100 % width, 48 px height, placeholder “Log or ask…”.       |
+| `RuleChip`           | 140×36 » pill, Lavender outline until active (Mint fill).   |
+| `BloomOrb`           | Use Lottie; expose prop `score`.                            |
+
+---
+
+## 5. MOTION RULES
+| Token         | Spec                                                  |
+| ------------- | ----------------------------------------------------- |
+| `btn-tap`     | scale 0.96, 150 ms ease-out shadow.                   |
+| `ring-fill`   | 0→value spring 0.8 s.                                 |
+| `confetti`    | Lavender/Mint/Orange burst 2 s on streak/trial.       |
+| `card-hover`  | elevate +4 px, blur 4→0 px, 150 ms.                   |
+| Motion prefers reduced | Disable confetti & Orb breathing.          |
+
+---
+
+## 6. ACCESSIBILITY
+- WCAG 2.2 AA colour contrast ≥ 4.5 : 1.  
+- Tap targets ≥ 44×44 px.  
+- Provide alt text for Bloom Orb state (“Wellness Score 72 percent”).
+
+---
+
+## 7. COPY PATTERNS
+- **Tip template** → “*Fact.* Do <Action>.”  
+  *Ex:* “Iron boosts fetal oxygen. Add lentils at lunch.”  
+- **Toast (success)** → “Saved! Your bloom just grew.”  
+- **Empty state** → “Quiet here… that’s healthy. 🌱”
+
+---
+
+## 8. OUTPUT REQUIREMENTS
+1. **React Native (Expo) component** + matching Figma frame.  
+2. Include token JSON (see below) in every export.  
+3. Lottie/Spline sources compressed ≤ 250 kB.  
+4. Follow screen IDs above; do **not invent new navigation entries** unless a prompt asks.
+
+```json
+// token.json stub
+{
+  "radiusCard": 16,
+  "radiusChip": 18,
+  "shadowBase": "0 4 8 rgba(0,0,0,0.05)",
+  "shadowHover": "0 6 12 rgba(0,0,0,0.10)",
+  "fontDisplay": "Clash Display",
+  "fontBody": "General Sans",
+  "accentActive": "#8A6DFF",
+  "successState": "#28C391"
