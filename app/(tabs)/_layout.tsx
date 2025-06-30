@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Chrome as Home, Plus, TrendingUp, User } from 'lucide-react-native';
+import { Chrome as Home, Plus, TrendingUp, User, Camera } from 'lucide-react-native';
 import { StyleSheet, Platform, Dimensions, View, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'; 
 import { BlurView } from 'expo-blur';
@@ -97,6 +97,19 @@ export default function TabLayout() {
           title: 'Profile', 
           tabBarIcon: ({ focused, color, size }) => (
             <User 
+              size={24} 
+              color={color} 
+              strokeWidth={2} 
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="food-camera"
+        options={{
+          title: 'Analyze',
+          tabBarIcon: ({ focused, color, size }) => (
+            <Camera 
               size={24} 
               color={color} 
               strokeWidth={2} 

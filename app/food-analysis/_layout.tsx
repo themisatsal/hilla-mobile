@@ -1,20 +1,38 @@
 import { Stack } from 'expo-router';
 import { useRouter } from 'expo-router';
-import { Button, TouchableOpacity } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
-export default function RootLayout() {
+import { TouchableOpacity } from 'react-native';
+import { ArrowLeft, X } from 'lucide-react-native';
+
+export default function FoodAnalysisLayout() {
   const router = useRouter();
+  
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen 
+        name="index" 
+        options={{ 
+          title: 'Food Analysis',
+          headerLeft: () => (
+            <TouchableOpacity 
+              onPress={() => router.back()}
+              style={{ marginLeft: 8 }}
+            >
+              <ArrowLeft size={24} color="#007AFF" />
+            </TouchableOpacity>
+          )
+        }} 
+      />
       <Stack.Screen
         name="result"
         options={{
           presentation: 'modal',
-          title: 'Analyze',
+          title: 'Nutritional Analysis',
           headerLeft: () => (
-            <TouchableOpacity onPress={() => router.dismiss()}>
-              <Ionicons name="close" size={24} color="black" />
+            <TouchableOpacity 
+              onPress={() => router.back()}
+              style={{ marginLeft: 8 }}
+            >
+              <X size={24} color="#1D1D1F" />
             </TouchableOpacity>
           ),
         }}
