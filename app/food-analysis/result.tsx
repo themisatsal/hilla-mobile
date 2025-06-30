@@ -7,7 +7,7 @@ import { ChevronUp, ChevronDown, Plus, Save, Share2 } from 'lucide-react-native'
 import { useRouter } from 'expo-router';
 
 const CollapsibleSection = ({ title, children }: { title: string; children: React.ReactNode }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false); 
   const rotation = useSharedValue(0);
 
   const toggleCollapse = () => {
@@ -64,20 +64,56 @@ export default function ResultScreen() {
   const handleSaveToLog = () => {
     setSaving(true);
     
-    // Simulate saving to log
-    setTimeout(() => {
-      setSaving(false);
-      Alert.alert(
-        "Saved to Log",
-        `${analysis.identifiedFood} has been added to your meal log.`,
-        [
-          { 
-            text: "OK", 
-            onPress: () => router.push('/(tabs)/log')
-          }
-        ]
-      );
-    }, 1500);
+    // Save to database
+    const saveAnalysis = async () => {
+      try {
+        const response = await fetch('/api/food-analysis', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: '550e8400-e29b-41d4-a716-446655440000', // Sample user ID
+            foodName: analysis.identifiedFood,
+            imageUrl: analysis.image,
+            portionSize: parseInt(analysis.portionSize),
+            nutritionData: {
+              perPortion: analysis.nutritionFactsPerPortion,
+              per100g: analysis.nutritionFactsPer100g,
+              additionalNotes: analysis.additionalNotes
+            },
+            savedToLog: true
+          }),
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          Alert.alert(
+            "Saved to Log",
+            `${analysis.identifiedFood} has been added to your meal log.`,
+            [
+              { 
+                text: "OK", 
+                onPress: () => router.push('/(tabs)/log')
+              }
+            ]
+          );
+        } else {
+          throw new Error(data.error || 'Failed to save analysis');
+        }
+      } catch (error) {
+        Alert.alert(
+          "Error",
+          "Failed to save analysis to log. Please try again."
+        );
+        console.error('Error saving analysis:', error);
+      } finally {
+        setSaving(false);
+      }
+    };
+    
+    saveAnalysis();
   };
 
   const handleShare = () => {
@@ -387,7 +423,7 @@ const styles = StyleSheet.create({
   adjustControls: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center', 
   },
   adjustButton: {
     width: 44,
@@ -447,7 +483,7 @@ const styles = StyleSheet.create({
   saveButtonText: {
     fontSize: 16,
     fontFamily: 'Inter-SemiBold',
-    color: '#FFFFFF',
+    color: '#FFFFFF', 
     fontWeight: '600',
   },
 });
