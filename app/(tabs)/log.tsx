@@ -144,9 +144,6 @@ export default function LogScreen() {
     router.push('/meal-details/1');
   };
 
-  const handlePhotoCapture = () => {
-    Alert.alert('Photo Capture', 'Opening camera to log food...');
-  };
 
   const handlePhotoCapture = async () => {
     try {
