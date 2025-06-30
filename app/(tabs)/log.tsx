@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, TextInput, Alert, Modal, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Clock, Search, Plus, Camera, Barcode, Mic, Zap, Sparkles, ChevronRight, Star, TrendingUp, X } from 'lucide-react-native';
+import { Clock, Search, Plus, Camera, Barcode, Mic, Zap, Sparkles, ChevronRight, Star, TrendingUp, X, Image as ImageIcon } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
