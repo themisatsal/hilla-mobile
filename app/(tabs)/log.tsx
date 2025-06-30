@@ -25,7 +25,7 @@ export default function LogScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [photoModalVisible, setPhotoModalVisible] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [analyzing, setAnalyzing] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false); 
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', () => {
@@ -136,14 +136,9 @@ export default function LogScreen() {
     Alert.alert('Food Details', `View details for ${food.name}`);
   };
   
-  const handleVoiceInput = () => {
-    Alert.alert('Voice Input', 'Listening for food description...');
-  };
-
   const handleMealSuggestion = (meal: any) => {
     router.push('/meal-details/1');
   };
-
 
   const handlePhotoCapture = async () => {
     try {
@@ -176,6 +171,14 @@ export default function LogScreen() {
     }
   };
 
+  const handleBarcodeScan = () => {
+    Alert.alert('Barcode Scanner', 'Opening barcode scanner...');
+  };
+
+  const handleVoiceInput = () => {
+    Alert.alert('Voice Input', 'Listening for food description...');
+  };
+
   const handleGalleryPick = async () => {
     try {
       // Launch image library
@@ -194,8 +197,6 @@ export default function LogScreen() {
       console.error('Error picking image:', error);
       Alert.alert('Error', 'Failed to select image. Please try again.');
     }
-  };
-
   const handleAnalyzePhoto = () => {
     setAnalyzing(true);
     
@@ -210,7 +211,11 @@ export default function LogScreen() {
     }, 1000);
   };
 
-
+  const closePhotoModal = () => {
+    setPhotoModalVisible(false);
+    setCapturedImage(null);
+  };
+  
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
       <Star
@@ -255,7 +260,6 @@ export default function LogScreen() {
               <TextInput
                 style={styles.searchInput}
                 placeholder="Search foods or ask Hilla..."
-                placeholderTextColor="#8E8E93"
                 placeholderTextColor="#8E8E93"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
