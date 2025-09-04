@@ -73,6 +73,39 @@ export interface TrackingSettings {
   updatedAt: string;
 }
 
+export interface FoodAnalysis {
+  id: string;
+  userId: string;
+  foodName: string;
+  imageUrl?: string;
+  portionSize: number;
+  nutritionData: {
+    perPortion: {
+      calories: string;
+      protein: string;
+      carbs: string;
+      fat: string;
+      fiber: string;
+      sugar: string;
+      sodium: string;
+      cholesterol: string;
+    };
+    per100g: {
+      calories: string;
+      protein: string;
+      carbs: string;
+      fat: string;
+      fiber: string;
+      sugar: string;
+      sodium: string;
+      cholesterol: string;
+    };
+    additionalNotes: string[];
+  };
+  savedToLog: boolean;
+  createdAt: string;
+}
+
 export interface AnalyticsData {
   userId: string;
   period: '7d' | '30d' | '3m';
