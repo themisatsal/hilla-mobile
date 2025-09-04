@@ -1,36 +1,14 @@
-import React, { useEffect } from 'react';
 import { Tabs } from 'expo-router';
-import { Chrome as Home, Plus, TrendingUp, User } from 'lucide-react-native';
+import { Chrome as Home, Plus, TrendingUp, User, Camera } from 'lucide-react-native';
 import { StyleSheet, Platform, Dimensions, View, Text } from 'react-native';
-import { useRouter, useRootNavigationState } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context'; 
 import { BlurView } from 'expo-blur';
-import { useAuth } from '@/components/AuthProvider';
-import { usePathname } from 'expo-router';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function TabLayout() {
-  const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
   const insets = useSafeAreaInsets();
-  const pathname = usePathname();
-  const rootNavigationState = useRootNavigationState();
   
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    // Only redirect if router is ready, auth is not loading, user is not authenticated,
-    // and we're not already on an auth route
-    if (rootNavigationState?.key && !authLoading && !user && !pathname.startsWith('/auth')) {
-      router.replace('/auth/login');
-    }
-  }, [user, authLoading, router, pathname, rootNavigationState?.key]);
-
-  // Don't render tabs if still loading auth or user is not authenticated
-  if (authLoading || !user) {
-    return null;
-  }
-
   const getTabBarHeight = () => {
     const iconSize = 24;
     const textHeight = 12;
@@ -77,7 +55,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Home', 
           tabBarIcon: ({ focused, color, size }) => (
             <Home 
               size={24} 
@@ -90,7 +68,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="log"
         options={{
-          title: 'Log',
+          title: 'Log', 
           tabBarIcon: ({ focused, color, size }) => (
             <Plus 
               size={24} 
@@ -103,7 +81,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="trends"
         options={{
-          title: 'Trends',
+          title: 'Trends', 
           tabBarIcon: ({ focused, color, size }) => (
             <TrendingUp 
               size={24} 
@@ -116,9 +94,22 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: 'Profile', 
           tabBarIcon: ({ focused, color, size }) => (
             <User 
+              size={24} 
+              color={color} 
+              strokeWidth={2} 
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="food-camera"
+        options={{
+          title: 'Analyze',
+          tabBarIcon: ({ focused, color, size }) => (
+            <Camera 
               size={24} 
               color={color} 
               strokeWidth={2} 
