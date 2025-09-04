@@ -17,7 +17,7 @@ export default function AskHillaScreen() {
   useEffect(() => {
     // Initialize chat with welcome message
     initializeChat();
-  }, []);
+  }, [initializeChat]);
 
   useEffect(() => {
     // Scroll to bottom when messages change
@@ -34,7 +34,7 @@ export default function AskHillaScreen() {
     if (!text.trim()) return;
     
     // Send message to AI
-    sendMessage(text.trim());
+    sendMessage(text);
     setInputText('');
   };
 
@@ -45,12 +45,11 @@ export default function AskHillaScreen() {
   const renderMessage = (message: ChatMessage) => (
     <View key={message.id} style={[
       styles.messageContainer,
-      message.isUser ? styles.userMessage : styles.aiMessage,
-      isLoading && message === messages[messages.length - 1] && !message.isUser && styles.typingMessage
+      message.isUser ? styles.userMessage : styles.aiMessage
     ]}>
       {!message.isUser && (
         <View style={styles.aiAvatar}>
-          <Brain size={16} color="#007AFF" strokeWidth={2} />
+          <Brain size={16} color="#007AFF" />
         </View>
       )}
       <View style={[
@@ -72,7 +71,7 @@ export default function AskHillaScreen() {
       </View>
       {message.isUser && (
         <View style={styles.userAvatar}>
-          <Heart size={16} color="#FF3B30" strokeWidth={2} />
+          <Heart size={16} color="#FF3B30" />
         </View>
       )}
     </View>
@@ -100,7 +99,7 @@ export default function AskHillaScreen() {
       <KeyboardAvoidingView 
         style={styles.container} 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
+      >
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -108,7 +107,7 @@ export default function AskHillaScreen() {
           </TouchableOpacity>
           <View style={styles.headerContent}>
             <View style={styles.hillaIcon}>
-              <Sparkles size={20} color="#007AFF" strokeWidth={2} />
+              <Sparkles size={20} color="#007AFF" />
             </View>
             <View>
               <Text style={styles.headerTitle}>Ask Hilla</Text>
@@ -136,7 +135,7 @@ export default function AskHillaScreen() {
           {isLoading && (
             <View style={styles.typingContainer}>
               <View style={styles.aiAvatar}>
-                <Brain size={16} color="#007AFF" strokeWidth={2} />
+                <Brain size={16} color="#007AFF" />
               </View>
               <View style={styles.typingBubble}>
                 <View style={styles.typingDots}>
@@ -146,7 +145,7 @@ export default function AskHillaScreen() {
                 </View>
               </View>
               <View style={styles.userAvatar}>
-                <View style={styles.placeholderAvatar} />
+                <Heart size={16} color="#FF3B30" />
               </View>
             </View>
           )}
@@ -165,7 +164,7 @@ export default function AskHillaScreen() {
               maxLength={500}
             />
             <TouchableOpacity style={styles.micButton}>
-              <Mic size={20} color="#8E8E93" strokeWidth={2} />
+              <Mic size={20} color="#8E8E93" />
             </TouchableOpacity>
           </View>
           <TouchableOpacity 
@@ -173,7 +172,7 @@ export default function AskHillaScreen() {
             onPress={() => handleSendMessage(inputText)}
             disabled={!inputText.trim()}
           >
-            <Send size={20} color="#FFFFFF" strokeWidth={2} />
+            <Send size={20} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -185,18 +184,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F2F2F7',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F2F2F7',
-  },
-  loadingText: {
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
-    color: '#8E8E93',
-    marginTop: 16,
   },
   header: {
     flexDirection: 'row',
@@ -249,7 +236,6 @@ const styles = StyleSheet.create({
   messagesContent: {
     padding: 20,
     paddingBottom: 100,
-    flexGrow: 1,
   },
   messageContainer: {
     flexDirection: 'row',
@@ -279,13 +265,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
-  },
-  placeholderAvatar: {
-    width: 32,
-    height: 32,
-    opacity: 0,
-    marginLeft: 8,
-    marginRight: 8,
   },
   messageBubble: {
     maxWidth: '75%',
@@ -387,9 +366,6 @@ const styles = StyleSheet.create({
   },
   typingDot1: {
     opacity: 0.4,
-  },
-  typingMessage: {
-    marginBottom: 8,
   },
   typingDot2: {
     opacity: 0.7,

@@ -1,13 +1,14 @@
 // Supabase API Client for Hilla
 import { supabase, handleSupabaseError, requireAuth } from '@/lib/supabase';
 import { Database } from '@/types/supabase';
-import { ApiResponse, User, Meal, DailyLog, TrackingSettings, NutrientData } from '@/types/api';
+import { ApiResponse, User, Meal, DailyLog, TrackingSettings, NutrientData, Goal } from '@/types/api';
 
 type Tables = Database['public']['Tables'];
 type UserRow = Tables['users']['Row'];
 type MealRow = Tables['meals']['Row'];
 type DailyLogRow = Tables['daily_logs']['Row'];
 type TrackingSettingsRow = Tables['tracking_settings']['Row'];
+type GoalRow = Tables['goals']['Row'];
 
 // Helper function to convert database row to API format
 const convertUserRow = (row: UserRow): User => ({
@@ -58,6 +59,23 @@ const convertDailyLogRow = (row: DailyLogRow, meals: Meal[] = []): DailyLog => (
 const convertTrackingSettingsRow = (row: TrackingSettingsRow): TrackingSettings => ({
   userId: row.user_id,
   selectedMetrics: (row.selected_metrics as string[]) || [],
+  updatedAt: row.updated_at,
+});
+
+const convertGoalRow = (row: GoalRow): Goal => ({
+  id: row.id,
+  userId: row.user_id,
+  title: row.title,
+  description: row.description,
+  targetValue: row.target_value,
+  currentValue: row.current_value,
+  unit: row.unit,
+  category: row.category,
+  color: row.color,
+  startDate: row.start_date,
+  targetDate: row.target_date || undefined,
+  isCompleted: row.is_completed,
+  createdAt: row.created_at,
   updatedAt: row.updated_at,
 });
 
@@ -469,6 +487,142 @@ export class SupabaseClient {
     });
 
     return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+  }
+
+  // Goals operations
+  async getUserGoals(userId: string): Promise<ApiResponse<Goal[]>> {
+    try {
+      const { data, error } = await supabase
+        .from('goals')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        return {
+          success: false,
+          error: handleSupabaseError(error),
+        };
+      }
+
+      return {
+        success: true,
+        data: data.map(convertGoalRow),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: 'Failed to fetch goals',
+      };
+    }
+  }
+
+  async createGoal(goalData: Omit<Goal, 'id' | 'createdAt' | 'updatedAt'>): Promise<ApiResponse<Goal>> {
+    try {
+      const { data, error } = await supabase
+        .from('goals')
+        .insert({
+          user_id: goalData.userId,
+          title: goalData.title,
+          description: goalData.description,
+          target_value: goalData.targetValue,
+          current_value: goalData.currentValue,
+          unit: goalData.unit,
+          category: goalData.category,
+          color: goalData.color,
+          start_date: goalData.startDate,
+          target_date: goalData.targetDate,
+          is_completed: goalData.isCompleted,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return {
+          success: false,
+          error: handleSupabaseError(error),
+        };
+      }
+
+      return {
+        success: true,
+        data: convertGoalRow(data),
+        message: 'Goal created successfully',
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: 'Failed to create goal',
+      };
+    }
+  }
+
+  async updateGoal(id: string, updates: Partial<Goal>): Promise<ApiResponse<Goal>> {
+    try {
+      const updateData: any = {};
+      
+      if (updates.title) updateData.title = updates.title;
+      if (updates.description !== undefined) updateData.description = updates.description;
+      if (updates.targetValue !== undefined) updateData.target_value = updates.targetValue;
+      if (updates.currentValue !== undefined) updateData.current_value = updates.currentValue;
+      if (updates.unit !== undefined) updateData.unit = updates.unit;
+      if (updates.category !== undefined) updateData.category = updates.category;
+      if (updates.color !== undefined) updateData.color = updates.color;
+      if (updates.startDate !== undefined) updateData.start_date = updates.startDate;
+      if (updates.targetDate !== undefined) updateData.target_date = updates.targetDate;
+      if (updates.isCompleted !== undefined) updateData.is_completed = updates.isCompleted;
+
+      const { data, error } = await supabase
+        .from('goals')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        return {
+          success: false,
+          error: handleSupabaseError(error),
+        };
+      }
+
+      return {
+        success: true,
+        data: convertGoalRow(data),
+        message: 'Goal updated successfully',
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: 'Failed to update goal',
+      };
+    }
+  }
+
+  async deleteGoal(id: string): Promise<ApiResponse> {
+    try {
+      const { error } = await supabase
+        .from('goals')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        return {
+          success: false,
+          error: handleSupabaseError(error),
+        };
+      }
+
+      return {
+        success: true,
+        message: 'Goal deleted successfully',
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: 'Failed to delete goal',
+      };
+    }
   }
 }
 

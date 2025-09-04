@@ -23,6 +23,23 @@ export interface User {
   updatedAt: string;
 }
 
+export interface Goal {
+  id: string;
+  userId: string;
+  title: string;
+  description?: string;
+  targetValue: number;
+  currentValue: number;
+  unit: string;
+  category: string;
+  color: string;
+  startDate: string;
+  targetDate?: string;
+  isCompleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface NutrientData {
   iron: number;
   dha: number;
@@ -71,39 +88,6 @@ export interface TrackingSettings {
   userId: string;
   selectedMetrics: string[];
   updatedAt: string;
-}
-
-export interface FoodAnalysis {
-  id: string;
-  userId: string;
-  foodName: string;
-  imageUrl?: string;
-  portionSize: number;
-  nutritionData: {
-    perPortion: {
-      calories: string;
-      protein: string;
-      carbs: string;
-      fat: string;
-      fiber: string;
-      sugar: string;
-      sodium: string;
-      cholesterol: string;
-    };
-    per100g: {
-      calories: string;
-      protein: string;
-      carbs: string;
-      fat: string;
-      fiber: string;
-      sugar: string;
-      sodium: string;
-      cholesterol: string;
-    };
-    additionalNotes: string[];
-  };
-  savedToLog: boolean;
-  createdAt: string;
 }
 
 export interface AnalyticsData {

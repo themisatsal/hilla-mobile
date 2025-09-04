@@ -9,6 +9,56 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      goals: {
+        Row: {
+          id: string
+          user_id: string
+          title: string
+          description: string
+          target_value: number
+          current_value: number
+          unit: string
+          category: string
+          color: string
+          start_date: string
+          target_date: string | null
+          is_completed: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          title: string
+          description?: string
+          target_value?: number
+          current_value?: number
+          unit?: string
+          category?: string
+          color?: string
+          start_date?: string
+          target_date?: string | null
+          is_completed?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          title?: string
+          description?: string
+          target_value?: number
+          current_value?: number
+          unit?: string
+          category?: string
+          color?: string
+          start_date?: string
+          target_date?: string | null
+          is_completed?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
       users: {
         Row: {
           id: string
@@ -156,117 +206,6 @@ export interface Database {
           user_id?: string
           selected_metrics?: Json
           updated_at?: string
-        }
-      }
-      food_analysis: {
-        Row: {
-          id: string
-          user_id: string
-          food_name: string
-          image_url: string | null
-          portion_size: number
-          nutrition_data: Json
-          created_at: string | null
-          saved_to_log: boolean | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          food_name: string
-          image_url?: string | null
-          portion_size: number
-          nutrition_data: Json
-          created_at?: string | null
-          saved_to_log?: boolean | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          food_name?: string
-          image_url?: string | null
-          portion_size?: number
-          nutrition_data?: Json
-          created_at?: string | null
-          saved_to_log?: boolean | null
-        }
-      }
-      goals: {
-        Row: {
-          id: string
-          user_id: string
-          title: string
-          description: string | null
-          target_value: number | null
-          current_value: number | null
-          unit: string | null
-          category: string | null
-          color: string | null
-          start_date: string | null
-          target_date: string | null
-          is_completed: boolean | null
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          title: string
-          description?: string | null
-          target_value?: number | null
-          current_value?: number | null
-          unit?: string | null
-          category?: string | null
-          color?: string | null
-          start_date?: string | null
-          target_date?: string | null
-          is_completed?: boolean | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          title?: string
-          description?: string | null
-          target_value?: number | null
-          current_value?: number | null
-          unit?: string | null
-          category?: string | null
-          color?: string | null
-          start_date?: string | null
-          target_date?: string | null
-          is_completed?: boolean | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-      }
-      food_preferences: {
-        Row: {
-          id: string
-          user_id: string
-          food_name: string
-          preference_type: string
-          notes: string | null
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          food_name: string
-          preference_type: string
-          notes?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          food_name?: string
-          preference_type?: string
-          notes?: string | null
-          created_at?: string | null
-          updated_at?: string | null
         }
       }
     }
