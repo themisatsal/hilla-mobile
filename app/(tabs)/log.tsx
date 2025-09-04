@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, TextInput, Alert, Modal, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Clock, Search, Plus, Camera, Barcode, Mic, Zap, Sparkles, ChevronRight, Star, TrendingUp, X } from 'lucide-react-native';
+import { Clock, Search, Plus, Camera, Barcode, Mic, Zap, Sparkles, ChevronRight, Star, TrendingUp } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { useRouter } from 'expo-router';
 
 const getResponsiveDimensions = () => {
   const { width, height } = Dimensions.get('window');
@@ -20,12 +18,8 @@ const getResponsiveDimensions = () => {
 
 export default function LogScreen() {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
   const [dimensions, setDimensions] = useState(getResponsiveDimensions());
   const [searchQuery, setSearchQuery] = useState('');
-  const [photoModalVisible, setPhotoModalVisible] = useState(false);
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [analyzing, setAnalyzing] = useState(false);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', () => {
@@ -135,10 +129,6 @@ export default function LogScreen() {
   const handleFoodLog = (food: any) => {
     Alert.alert('Food Details', `View details for ${food.name}`);
   };
-  
-  const handleVoiceInput = () => {
-    Alert.alert('Voice Input', 'Listening for food description...');
-  };
 
   const handleMealSuggestion = (meal: any) => {
     router.push('/meal-details/1');
@@ -148,71 +138,13 @@ export default function LogScreen() {
     Alert.alert('Photo Capture', 'Opening camera to log food...');
   };
 
-  const handlePhotoCapture = async () => {
-    try {
-      // Request camera permissions
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(
-          'Permission Required',
-          'Camera access is needed to take photos of your food',
-          [{ text: 'OK' }]
-        );
-        return;
-      }
-      
-      // Launch camera
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
-      });
-      
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        setCapturedImage(result.assets[0].uri);
-        setPhotoModalVisible(true);
-      }
-    } catch (error) {
-      console.error('Error taking photo:', error);
-      Alert.alert('Error', 'Failed to take photo. Please try again.');
-    }
+  const handleBarcodeScan = () => {
+    Alert.alert('Barcode Scanner', 'Opening barcode scanner...');
   };
 
-  const handleGalleryPick = async () => {
-    try {
-      // Launch image library
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
-      });
-      
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        setCapturedImage(result.assets[0].uri);
-        setPhotoModalVisible(true);
-      }
-    } catch (error) {
-      console.error('Error picking image:', error);
-      Alert.alert('Error', 'Failed to select image. Please try again.');
-    }
+  const handleVoiceInput = () => {
+    Alert.alert('Voice Input', 'Listening for food description...');
   };
-
-  const handleAnalyzePhoto = () => {
-    setAnalyzing(true);
-    
-    // Simulate analysis delay
-    setTimeout(() => {
-      setPhotoModalVisible(false);
-      setAnalyzing(false);
-      setCapturedImage(null);
-      
-      // Navigate to food analysis screen
-      router.push('/food-analysis');
-    }, 1000);
-  };
-
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -259,7 +191,6 @@ export default function LogScreen() {
                 style={styles.searchInput}
                 placeholder="Search foods or ask Hilla..."
                 placeholderTextColor="#8E8E93"
-                placeholderTextColor="#8E8E93"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
               />
@@ -269,27 +200,11 @@ export default function LogScreen() {
             </View>
 
             <View style={styles.captureButtons}>
-              <TouchableOpacity 
-                style={styles.captureButton} 
-                activeOpacity={0.8} 
-                onPress={handlePhotoCapture}
-              >
+              <TouchableOpacity style={styles.captureButton} activeOpacity={0.8} onPress={handlePhotoCapture}>
                 <Camera size={20} color="#FFFFFF" />
                 <Text style={styles.captureText}>Photo</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.captureButton, { backgroundColor: '#34C759' }]} 
-                activeOpacity={0.8} 
-                onPress={handleGalleryPick}
-              >
-                <ImageIcon size={20} color="#FFFFFF" />
-                <Text style={styles.captureText}>Gallery</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.captureButton, { backgroundColor: '#FF9500' }]} 
-                activeOpacity={0.8} 
-                onPress={handleBarcodeScan}
-              >
+              <TouchableOpacity style={styles.captureButton} activeOpacity={0.8} onPress={handleBarcodeScan}>
                 <Barcode size={20} color="#FFFFFF" />
                 <Text style={styles.captureText}>Scan</Text>
               </TouchableOpacity>
@@ -550,61 +465,6 @@ export default function LogScreen() {
           </View>
         </ScrollView>
         </View>
-        
-        {/* Photo Capture Modal */}
-        <Modal
-          visible={photoModalVisible}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={closePhotoModal}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Food Photo</Text>
-                <TouchableOpacity 
-                  style={styles.closeButton} 
-                  onPress={closePhotoModal}
-                >
-                  <X size={24} color="#1D1D1F" />
-                </TouchableOpacity>
-              </View>
-              
-              {capturedImage && (
-                <View style={styles.imagePreviewContainer}>
-                  <Image 
-                    source={{ uri: capturedImage }} 
-                    style={styles.imagePreview} 
-                    resizeMode="cover"
-                  />
-                </View>
-              )}
-              
-              <View style={styles.modalActions}>
-                <TouchableOpacity 
-                  style={styles.cancelButton} 
-                  onPress={closePhotoModal}
-                >
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={styles.analyzeButton}
-                  onPress={handleAnalyzePhoto}
-                  disabled={analyzing}
-                >
-                  {analyzing ? (
-                    <Text style={styles.analyzeButtonText}>Analyzing...</Text>
-                  ) : (
-                    <>
-                      <Zap size={16} color="#FFFFFF" />
-                      <Text style={styles.analyzeButtonText}>Analyze</Text>
-                    </>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
       </SafeAreaView>
     </View>
   );
@@ -676,10 +536,9 @@ const styles = StyleSheet.create({
   captureButtons: {
     flexDirection: 'row',
     gap: 12,
-    justifyContent: 'space-between',
   },
   captureButton: {
-    flex: 1, 
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1236,85 +1095,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: 'Inter-Medium',
     color: '#007AFF',
-    fontWeight: '600',
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
-    paddingBottom: 40,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
-    color: '#1D1D1F',
-    fontWeight: '600',
-  },
-  closeButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F2F2F7',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  imagePreviewContainer: {
-    width: '100%',
-    height: 300,
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginBottom: 20,
-    backgroundColor: '#F2F2F7',
-  },
-  imagePreview: {
-    width: '100%',
-    height: '100%',
-  },
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 16,
-  },
-  cancelButton: {
-    flex: 1,
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#F2F2F7',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
-    color: '#8E8E93',
-    fontWeight: '500',
-  },
-  analyzeButton: {
-    flex: 2,
-    flexDirection: 'row',
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  analyzeButtonText: {
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
-    color: '#FFFFFF',
     fontWeight: '600',
   },
 });

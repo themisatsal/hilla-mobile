@@ -3,37 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera, Image as ImageIcon, Upload, Zap } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
 
 export default function FoodCameraScreen() {
   const router = useRouter();
-  const [recentAnalyses, setRecentAnalyses] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const handleCameraPress = () => {
     router.push('/food-analysis');
   };
-
-  useEffect(() => {
-    // Fetch recent analyses when the screen is focused
-    const fetchRecentAnalyses = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/food-analysis?userId=550e8400-e29b-41d4-a716-446655440000&limit=3');
-        const data = await response.json();
-        
-        if (data.success) {
-          setRecentAnalyses(data.data || []);
-        }
-      } catch (error) {
-        console.error('Error fetching recent analyses:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchRecentAnalyses();
-  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -98,50 +74,12 @@ export default function FoodCameraScreen() {
         <View style={styles.recentSection}>
           <Text style={styles.recentTitle}>Recent Analyses</Text>
           
-          {loading ? (
-            <View style={styles.loadingState}>
-              <Text style={styles.loadingText}>Loading recent analyses...</Text>
-            </View>
-          ) : recentAnalyses.length > 0 ? (
-            <View style={styles.recentList}>
-              {recentAnalyses.map((analysis: any) => (
-                <TouchableOpacity 
-                  key={analysis.id} 
-                  style={styles.recentItem}
-                  onPress={() => {
-                    // Navigate to details or re-analyze
-                    console.log('View analysis:', analysis.id);
-                  }}
-                >
-                  {analysis.image_url ? (
-                    <Image 
-                      source={{ uri: analysis.image_url }} 
-                      style={styles.recentItemImage} 
-                    />
-                  ) : (
-                    <View style={styles.recentItemImagePlaceholder}>
-                      <ImageIcon size={24} color="#8E8E93" />
-                    </View>
-                  )}
-                  <View style={styles.recentItemContent}>
-                    <Text style={styles.recentItemTitle} numberOfLines={1}>
-                      {analysis.food_name}
-                    </Text>
-                    <Text style={styles.recentItemDate}>
-                      {new Date(analysis.created_at).toLocaleDateString()}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          ) : (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyStateText}>No recent analyses</Text>
-              <Text style={styles.emptyStateSubtext}>
-                Take a photo of your food to get started
-              </Text>
-            </View>
-          )}
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyStateText}>No recent analyses</Text>
+            <Text style={styles.emptyStateSubtext}>
+              Take a photo of your food to get started
+            </Text>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -284,63 +222,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: '#8E8E93',
     textAlign: 'center',
-  },
-  loadingState: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingText: {
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
-    color: '#8E8E93',
-    fontWeight: '500',
-  },
-  recentList: {
-    gap: 12,
-  },
-  recentItem: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 1,
-  },
-  recentItemImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    marginRight: 12,
-  },
-  recentItemImagePlaceholder: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    marginRight: 12,
-    backgroundColor: '#F2F2F7',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  recentItemContent: {
-    flex: 1,
-  },
-  recentItemTitle: {
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
-    color: '#1D1D1F',
-    marginBottom: 4,
-    fontWeight: '600',
-  },
-  recentItemDate: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: '#8E8E93',
   },
 });
