@@ -4,9 +4,9 @@ import OpenAI from 'openai';
 // Initialize OpenAI client with OpenRouter configuration
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
-  apiKey: "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",
+  apiKey: process.env.EXPO_PUBLIC_OPENROUTER_API_KEY || "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",
   defaultHeaders: {
-    "HTTP-Referer": "https://hilla-nutrition.app", 
+    "HTTP-Referer": "https://hilla-nutrition.app", // Site URL for rankings on openrouter.ai
     "X-Title": "Hilla Nutrition", // Site title for rankings on openrouter.ai
   },
 });

@@ -19,15 +19,10 @@ export default function AiTestScreen() {
   const testConnection = async () => {
     setLoading(true);
     setTestResult(null);
-    setResponse(''); 
+    setResponse('');
     
     try {
-      const result = await fetch('/api/ai/test', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const result = await fetch('/api/ai/test');
       const data = await result.json();
       
       setTestResult({
@@ -53,22 +48,21 @@ export default function AiTestScreen() {
     setResponse('');
     
     try {
-      const result = await fetch('/api/ai/chat', {
+      const result = await fetch('/api/ai/nutrition-advice', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           userId: '550e8400-e29b-41d4-a716-446655440000', // Sample user ID
-          message: prompt,
-          previousMessages: []
+          prompt: prompt
         })
       });
       
       const data = await result.json();
       
       if (data.success) {
-        setResponse(data.data.text);
+        setResponse(data.data.advice);
       } else {
         setResponse(`Error: ${data.error}`);
       }
@@ -93,7 +87,7 @@ export default function AiTestScreen() {
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
         {/* Connection Test */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>OpenRouter AI Connection Test</Text>
+          <Text style={styles.sectionTitle}>OpenRouter Connection Test</Text>
           <Text style={styles.sectionDescription}>
             Test the connection to the OpenRouter AI service.
           </Text>
@@ -153,11 +147,11 @@ export default function AiTestScreen() {
           )}
         </View>
 
-        {/* AI Chat Test */}
+        {/* Nutrition Advice Test */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>AI Chat Test</Text>
+          <Text style={styles.sectionTitle}>Nutrition Advice Test</Text>
           <Text style={styles.sectionDescription}>
-            Test the AI chat API with a custom prompt.
+            Test the AI nutrition advice API with a custom prompt.
           </Text>
           
           <View style={styles.inputContainer}>
@@ -173,7 +167,7 @@ export default function AiTestScreen() {
               style={styles.sendButton}
               onPress={testNutritionAdvice}
               disabled={loading || !prompt.trim()}
-            > 
+            >
               <Send size={20} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
@@ -434,5 +428,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     color: '#1D1D1F',
     lineHeight: 20,
-  }
+  },
 });

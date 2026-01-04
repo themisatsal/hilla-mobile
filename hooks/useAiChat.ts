@@ -51,117 +51,48 @@ export function useAiChat(userId: string) {
     try {
       // Get previous messages for context (limit to last 5 for token efficiency)
       const previousMessages = messages.slice(-5).map(msg => ({
-        role: msg.isUser ? "user" : "assistant",
-        content: msg.text
+        text: msg.text,
+        isUser: msg.isUser
       }));
 
-      // Call the OpenRouter API directly
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": "Bearer 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",
-          "HTTP-Referer": "https://hilla-nutrition.app",
-          "X-Title": "Hilla Nutrition",
-          "Content-Type": "application/json"
+      // Call the API
+      const response = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          "model": "deepseek/deepseek-r1-0528:free",
-          "messages": [
-            {
-              "role": "system",
-              "content": `You are Hilla, an expert AI nutrition assistant specializing in maternal health from conception through postpartum.
-              
-              Provide evidence-based, practical nutrition advice that is:
-              1. Scientifically accurate and up-to-date
-              2. Personalized to maternal health needs
-              3. Actionable with specific food suggestions
-              4. Concise and easy to understand
-              
-              IMPORTANT: If asked about serious medical conditions, always advise consulting a healthcare provider.
-              Format your response in a conversational, supportive tone. Use emoji sparingly for emphasis.`
-            },
-            ...previousMessages,
-            {
-              "role": "user",
-              "content": text
-            }
-          ]
+          userId,
+          message: text,
+          previousMessages
         })
       });
       
       const data = await response.json();
-      
-      if (data.choices && data.choices.length > 0) {
-        const aiResponse = data.choices[0].message.content;
-        
-        // Generate follow-up suggestions
-        const suggestionsResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Authorization": "Bearer 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",
-            "HTTP-Referer": "https://hilla-nutrition.app",
-            "X-Title": "Hilla Nutrition",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            "model": "deepseek/deepseek-r1-0528:free",
-            "messages": [
-              {
-                "role": "system",
-                "content": "Generate 3-4 follow-up questions based on the conversation. Return ONLY a JSON array of strings."
-              },
-              ...previousMessages.map(msg => ({
-                "role": msg.role,
-                "content": msg.content
-              })),
-              {
-                "role": "user",
-                "content": text
-              },
-              {
-                "role": "assistant",
-                "content": aiResponse
-              },
-              {
-                "role": "user",
-                "content": "Based on this conversation, what are 3-4 follow-up questions the user might want to ask? Return ONLY a JSON array of strings."
-              }
-            ],
-            "response_format": { "type": "json_object" }
-          })
-        });
-        
-        const suggestionsData = await suggestionsResponse.json();
-        let suggestions: string[] = [];
-        
-        if (suggestionsData.choices && suggestionsData.choices.length > 0) {
-          try {
-            const suggestionsContent = suggestionsData.choices[0].message.content;
-            const parsedSuggestions = JSON.parse(suggestionsContent);
-            suggestions = Array.isArray(parsedSuggestions) ? parsedSuggestions : 
-                        (parsedSuggestions.suggestions || parsedSuggestions.questions || []);
-          } catch (error) {
-            console.error('Error parsing suggestions:', error);
-            suggestions = [
-              "What foods are high in iron?",
-              "How much water should I drink?",
-              "What supplements do I need?"
-            ];
-          }
-        }
-        
+
+      if (data.success && data.data) {
         // Add AI response to the chat
         const aiMessage: ChatMessage = {
-          id: Date.now().toString() + '-ai',
-          text: aiResponse,
+          id: (Date.now() + 1).toString(),
+          text: data.data.text,
           isUser: false,
           timestamp: new Date(),
-          suggestions: suggestions
+          suggestions: data.data.suggestions
         };
         
         setMessages(prev => [...prev, aiMessage]);
       } else {
-        throw new Error('No response from AI service');
+        setError(data.error || 'Failed to get a response');
+        
+        // Add error message to the chat
+        const errorMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          text: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
+          isUser: false,
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, errorMessage]);
       }
     } catch (err) {
       console.error('Error sending message:', err);
@@ -169,7 +100,7 @@ export function useAiChat(userId: string) {
       
       // Add error message to the chat
       const errorMessage: ChatMessage = {
-        id: Date.now().toString() + '-error',
+        id: (Date.now() + 1).toString(),
         text: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
         isUser: false,
         timestamp: new Date()
@@ -179,7 +110,7 @@ export function useAiChat(userId: string) {
     } finally {
       setIsLoading(false);
     }
-  }, [messages]);
+  }, [userId, messages]);
 
   return {
     messages,
