@@ -9,56 +9,6 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      goals: {
-        Row: {
-          id: string
-          user_id: string
-          title: string
-          description: string
-          target_value: number
-          current_value: number
-          unit: string
-          category: string
-          color: string
-          start_date: string
-          target_date: string | null
-          is_completed: boolean
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          title: string
-          description?: string
-          target_value?: number
-          current_value?: number
-          unit?: string
-          category?: string
-          color?: string
-          start_date?: string
-          target_date?: string | null
-          is_completed?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          title?: string
-          description?: string
-          target_value?: number
-          current_value?: number
-          unit?: string
-          category?: string
-          color?: string
-          start_date?: string
-          target_date?: string | null
-          is_completed?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-      }
       users: {
         Row: {
           id: string

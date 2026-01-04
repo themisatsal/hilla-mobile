@@ -1,5 +1,5 @@
 // AI Test API endpoint
-import OpenAI from 'npm:openai';
+import OpenAI from 'openai';
 import { ApiResponse } from '@/types/api';
 
 export async function GET(request: Request): Promise<Response> {
@@ -7,16 +7,16 @@ export async function GET(request: Request): Promise<Response> {
     // Initialize OpenAI client with OpenRouter configuration
     const openai = new OpenAI({
       baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.EXPO_PUBLIC_OPENROUTER_API_KEY || "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",
+      apiKey: "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", 
       defaultHeaders: {
-        "HTTP-Referer": "https://hilla-nutrition.app",
+        "HTTP-Referer": "https://hilla-nutrition.app", 
         "X-Title": "Hilla Nutrition",
       },
     });
 
     // Test the OpenAI connection
     const completion = await openai.chat.completions.create({
-      model: "deepseek/deepseek-r1-0528:free",
+      model: "anthropic/claude-3-haiku:free",
       messages: [
         {
           "role": "user",

@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Clock, Search, Plus, Camera, Barcode, Mic, Zap, Sparkles, ChevronRight, Star, TrendingUp } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context'; 
-import { Platform } from 'react-native'; 
-import { useRouter } from 'expo-router';
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Platform } from 'react-native';
 
 const getResponsiveDimensions = () => {
   const { width, height } = Dimensions.get('window');
@@ -20,13 +18,8 @@ const getResponsiveDimensions = () => {
 
 export default function LogScreen() {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
   const [dimensions, setDimensions] = useState(getResponsiveDimensions());
   const [searchQuery, setSearchQuery] = useState('');
-  const [showCamera, setShowCamera] = useState(false);
-  const [cameraType, setCameraType] = useState<CameraType>('back');
-  const [permission, requestPermission] = useCameraPermissions();
-  const cameraRef = useRef<any>(null);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', () => {
@@ -142,11 +135,7 @@ export default function LogScreen() {
   };
 
   const handlePhotoCapture = () => {
-    if (!permission?.granted) {
-      requestPermission();
-      return;
-    }
-    setShowCamera(true);
+    Alert.alert('Photo Capture', 'Opening camera to log food...');
   };
 
   const handleBarcodeScan = () => {
@@ -155,35 +144,6 @@ export default function LogScreen() {
 
   const handleVoiceInput = () => {
     Alert.alert('Voice Input', 'Listening for food description...');
-  };
-
-  const takePicture = async () => {
-    if (cameraRef.current) {
-      try {
-        const photo = await cameraRef.current.takePictureAsync();
-        setShowCamera(false);
-        
-        // Here you would typically analyze the photo with AI
-        // For now, we'll just show a success message
-        Alert.alert(
-          'Photo Captured', 
-          'Your food photo was captured successfully. Would you like to analyze it with AI?',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel'
-            },
-            {
-              text: 'Analyze',
-              onPress: () => router.push('/ai-test')
-            }
-          ]
-        );
-      } catch (error) {
-        console.error('Error taking picture:', error);
-        Alert.alert('Error', 'Failed to capture photo');
-      }
-    }
   };
 
   const renderStars = (rating: number) => {
@@ -196,38 +156,6 @@ export default function LogScreen() {
       />
     ));
   };
-
-  if (showCamera) {
-    return (
-      <View style={styles.cameraContainer}>
-        <CameraView
-          ref={cameraRef}
-          style={styles.camera}
-          facing={cameraType}
-        >
-          <View style={styles.cameraControls}>
-            <TouchableOpacity 
-              style={styles.closeButton} 
-              onPress={() => setShowCamera(false)}
-            >
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.captureButtonContainer} onPress={takePicture}>
-              <View style={styles.captureButton} />
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={styles.flipButton} 
-              onPress={() => setCameraType(current => current === 'back' ? 'front' : 'back')}
-            >
-              <Text style={styles.flipButtonText}>Flip</Text>
-            </TouchableOpacity>
-          </View>
-        </CameraView>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
@@ -1168,58 +1096,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Medium',
     color: '#007AFF',
     fontWeight: '600',
-  },
-  cameraContainer: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  camera: {
-    flex: 1,
-  },
-  cameraControls: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 30,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
-  closeButton: {
-    padding: 12,
-    borderRadius: 30,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  closeButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
-  },
-  captureButtonContainer: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  captureButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#FFFFFF',
-  },
-  flipButton: {
-    padding: 12,
-    borderRadius: 30,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  flipButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
   },
 });

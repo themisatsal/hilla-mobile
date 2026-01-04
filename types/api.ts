@@ -23,23 +23,6 @@ export interface User {
   updatedAt: string;
 }
 
-export interface Goal {
-  id: string;
-  userId: string;
-  title: string;
-  description?: string;
-  targetValue: number;
-  currentValue: number;
-  unit: string;
-  category: string;
-  color: string;
-  startDate: string;
-  targetDate?: string;
-  isCompleted: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface NutrientData {
   iron: number;
   dha: number;

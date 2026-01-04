@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
-import { useFonts } from 'expo-font';
+import { useFonts } from 'expo-font'; 
 import {
   Inter_400Regular,
   Inter_500Medium,
@@ -38,6 +38,7 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="ai-test" />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />

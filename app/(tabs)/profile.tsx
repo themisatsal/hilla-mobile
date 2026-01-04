@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Settings, Download, Share2, CreditCard as Edit3, Crown, Calendar, ChevronRight, User, Heart, Target, Zap, Sparkles, Plus } from 'lucide-react-native';
+import { Settings, Download, Share2, CreditCard as Edit3, Crown, Calendar, ChevronRight, User, Heart, Target, Zap, Sparkles } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useGoals } from '@/hooks/useGoals';
 import StreakTracker from '@/components/StreakTracker';
 import GoalChip from '@/components/GoalChip';
 import HillaLogo from '@/components/HillaLogo';
@@ -25,8 +24,6 @@ const getResponsiveDimensions = () => {
 export default function ProfileScreen() {
   const router = useRouter();
   const { state, isLoaded } = useOnboardingState();
-  const userId = '550e8400-e29b-41d4-a716-446655440000'; // Default to sample user ID
-  const { goals } = useGoals(userId);
   const [displayName, setDisplayName] = useState('Sarah Johnson');
   const [initials, setInitials] = useState('SJ');
   const [dimensions, setDimensions] = useState(getResponsiveDimensions());
@@ -203,45 +200,6 @@ export default function ProfileScreen() {
           <View style={[styles.section, { paddingHorizontal: 0 }]}>
             <Text style={[styles.sectionTitle, { fontSize: responsiveStyles.fontSize.sectionTitle }]}>Your Progress</Text>
             <StreakTracker currentStreak={12} bestStreak={18} />
-          </View>
-
-          {/* Current Goals */}
-          <View style={[styles.section, { paddingHorizontal: 0 }]}>
-            <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { fontSize: responsiveStyles.fontSize.sectionTitle }]}>Current Goals</Text>
-              <TouchableOpacity 
-                style={[styles.manageButton, {
-                  backgroundColor: `${stageInfo.color}15`
-                }]} 
-                activeOpacity={0.7}
-                onPress={() => router.push('/goals')}
-              >
-                <Sparkles size={14} color={stageInfo.color} />
-                <Text style={[styles.manageText, { color: stageInfo.color }]}>Manage</Text>
-              </TouchableOpacity>
-            </View>
-            
-            <View style={[styles.goalsGrid, dimensions.isTablet && styles.goalsGridTablet]}>
-              {goals.slice(0, 4).filter(goal => !goal.isCompleted).map(goal => (
-                <GoalChip 
-                  key={goal.id}
-                  label={goal.title}
-                  target={`${goal.targetValue} ${goal.unit}`}
-                  progress={Math.min(100, Math.round((goal.currentValue / goal.targetValue) * 100))}
-                  color={goal.color}
-                />
-              ))}
-              
-              {goals.filter(goal => !goal.isCompleted).length === 0 && (
-                <TouchableOpacity 
-                  style={styles.addGoalCard}
-                  onPress={() => router.push('/goals')}
-                >
-                  <Plus size={24} color="#8E8E93" />
-                  <Text style={styles.addGoalText}>Add Goals</Text>
-                </TouchableOpacity>
-              )}
-            </View>
           </View>
 
           {/* Health Summary */}
@@ -618,35 +576,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Inter-Medium',
     fontWeight: '600',
-  },
-  goalsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  goalsGridTablet: {
-    justifyContent: 'flex-start',
-  },
-  addGoalCard: {
-    width: '47%',
-    maxWidth: 200,
-    borderRadius: 16,
-    padding: 16,
-    backgroundColor: '#F2F2F7',
-    borderWidth: 1,
-    borderColor: '#E5E5EA',
-    borderStyle: 'dashed',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 100,
-    gap: 8,
-  },
-  addGoalText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: '#8E8E93',
-    fontWeight: '500',
   },
   healthCard: {
     backgroundColor: '#FFFFFF',
